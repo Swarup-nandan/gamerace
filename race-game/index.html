@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>NEON RACER — 3D Car Racing Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+
+  <!-- Three.js Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Crash flash overlay -->
+  <div id="crash-flash"></div>
+
+  <!-- Particle burst layer -->
+  <div id="particles"></div>
+
+  <!-- Countdown overlay -->
+  <div id="countdown" style="opacity:0;">
+    <div id="countdown-val">3</div>
+  </div>
+
+  <!-- ==================== HUD ==================== -->
+  <div id="hud">
+    <!-- Left: Score + Combo -->
+    <div class="hud-panel">
+      <div class="hud-label">Score</div>
+      <div class="hud-value" id="score-val">0</div>
+      <div id="combo">× 1.0 COMBO</div>
+    </div>
+
+    <!-- Center: Speed -->
+    <div class="hud-panel" style="text-align:center;">
+      <div class="hud-label">Speed</div>
+      <div class="hud-value" id="speed-val">0</div>
+      <div id="speed-bar-wrap"><div id="speed-bar"></div></div>
+    </div>
+
+    <!-- Right: Distance -->
+    <div class="hud-panel" style="text-align:right;">
+      <div class="hud-label">Distance</div>
+      <div class="hud-value" id="dist-val">0m</div>
+    </div>
+  </div>
+
+  <!-- Difficulty badge -->
+  <div id="difficulty-badge">LVL 1</div>
+
+  <!-- ==================== MENU SCREEN ==================== -->
+  <div id="screen-menu" class="screen">
+    <div class="screen-inner">
+      <div class="game-title">
+        <span class="line1">NEON</span>
+        <span class="line2">RACER</span>
+      </div>
+      <div class="tagline">Survive the neon highway</div>
+
+      <div class="controls-info">
+        <div class="key-hint"><span class="key">◄</span> Lane Left</div>
+        <div class="key-hint"><span class="key">►</span> Lane Right</div>
+        <div class="key-hint"><span class="key">SPACE</span> Start</div>
+      </div>
+
+      <div>
+        <button class="btn" id="btn-start">START ENGINE</button>
+      </div>
+
+      <div style="margin-top:32px; font-size:11px; color:#4a7a9b; letter-spacing:2px;">
+        BEST: <span id="menu-best" style="color:#00f5ff;">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== GAME OVER SCREEN ==================== -->
+  <div id="screen-gameover" class="screen" style="display:none;">
+    <div class="screen-inner">
+      <div class="final-score-label">FINAL SCORE</div>
+      <div class="final-score-value" id="go-score">0</div>
+      <div class="final-score-dist" id="go-dist">0m</div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="sv" id="go-best">0</div>
+          <div class="sl">Best Score</div>
+        </div>
+        <div class="stat-box">
+          <div class="sv" id="go-speed">0</div>
+          <div class="sl">Top Speed</div>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn"           id="btn-restart">TRY AGAIN</button>
+        <button class="btn secondary" id="btn-menu"   >MAIN MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile touch buttons -->
+  <div id="touch-controls" style="
+    position:fixed; bottom:32px; left:0; right:0;
+    display:flex; justify-content:space-between;
+    padding:0 24px; pointer-events:none; z-index:200;
+  ">
+    <button id="btn-left" style="
+      pointer-events:all;
+      width:80px; height:80px;
+      background:rgba(0,245,255,0.1);
+      border:2px solid rgba(0,245,255,0.4);
+      border-radius:50%;
+      font-size:28px; color:#00f5ff;
+      cursor:pointer;
+      box-shadow:0 0 20px rgba(0,245,255,0.3);
+    ">◄</button>
+    <button id="btn-right" style="
+      pointer-events:all;
+      width:80px; height:80px;
+      background:rgba(255,0,110,0.1);
+      border:2px solid rgba(255,0,110,0.4);
+      border-radius:50%;
+      font-size:28px; color:#ff006e;
+      cursor:pointer;
+      box-shadow:0 0 20px rgba(255,0,110,0.3);
+    ">►</button>
+  </div>
+
+  <!-- ES Module entry -->
+  <script type="module" src="main.js"></script>
+
+  <script>
+    // Best score in menu
+    const best = localStorage.getItem('neonRacerBest');
+    if (best) {
+      const el = document.getElementById('menu-best');
+      if (el) el.textContent = parseInt(best).toLocaleString();
+    }
+
+    // Mobile touch buttons
+    const isMobile = /Mobi|Android|Touch/i.test(navigator.userAgent)
+      || window.matchMedia('(pointer: coarse)').matches;
+
+    document.getElementById('touch-controls').style.display = isMobile ? 'flex' : 'none';
+
+    document.getElementById('btn-left').addEventListener('touchstart', e => {
+      e.preventDefault();
+      window.dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowLeft', bubbles: true }));
+    });
+    document.getElementById('btn-left').addEventListener('touchend', e => {
+      e.preventDefault();
+      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'ArrowLeft', bubbles: true }));
+    });
+    document.getElementById('btn-right').addEventListener('touchstart', e => {
+      e.preventDefault();
+      window.dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowRight', bubbles: true }));
+    });
+    document.getElementById('btn-right').addEventListener('touchend', e => {
+      e.preventDefault();
+      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'ArrowRight', bubbles: true }));
+    });
+  </script>
+</body>
+</html>
