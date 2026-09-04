@@ -23,10 +23,9 @@ const cursorEl      = document.getElementById('cursor');
 
 // ---- Cursor ----
 window.addEventListener('mousemove', e => {
-  cursorEl.style.left = e.clientX + 'px';
+  cursorEl.style.left = e.clientX + 'px';   
   cursorEl.style.top  = e.clientY + 'px';
 });
-
 // ---- Init ----
 initScene(canvas);
 createPlayerCar();
